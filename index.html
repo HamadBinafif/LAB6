@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Lab 6</title>
+</head>
+<body>
+
+<h1>Lab 6</h1>
+<h2>Like or dislike</h2>
+
+<button id="likeBtn">👍<span id="likeCount">100</span></button>
+<button id="dislikeBtn">👎<span id="dislikeCount">20</span></button>
+
+<h3>Comments</h3>
+<textarea id="commentInput" placeholder="Write a comment..."></textarea>
+<br>
+<button id="submitBtn">Submit</button>
+<button id="clearBtn">Clear</button>
+
+<p id="message"></p>
+<ul id="commentList"></ul>
+
+<script>
+    var START_LIKES = 100;
+    var START_DISLIKES = 20;
+
+    var likes = START_LIKES;
+    var dislikes = START_DISLIKES;
+    var comments = [];
+    var hasVoted = false;
+    var hasCommented = false;
+
+    var likeBtn = document.getElementById("likeBtn");
+    var dislikeBtn = document.getElementById("dislikeBtn");
+    var submitBtn = document.getElementById("submitBtn");
+    var clearBtn = document.getElementById("clearBtn");
+    var commentInput = document.getElementById("commentInput");
+    var message = document.getElementById("message");
+
+    function updateUI() {
+        document.getElementById("likeCount").textContent = likes;
+        document.getElementById("dislikeCount").textContent = dislikes;
+
+        likeBtn.disabled = hasVoted;
+        dislikeBtn.disabled = hasVoted;
+        submitBtn.disabled = hasCommented;
+        commentInput.disabled = hasCommented;
+
+        var list = document.getElementById("commentList");
+        list.innerHTML = "";
+        for (var i = 0; i < comments.length; i++) {
+            var li = document.createElement("li");
+            li.textContent = comments[i];
+            list.appendChild(li);
+        }
+    }
+
+    function vote(choice) {
+        if (hasVoted) {
+            message.textContent = "You have already voted.";
+            return;
+        }
+
+        if (choice === "like") {
+            likes++;
+        } else {
+            dislikes++;
+        }
+
+        hasVoted = true;
+        message.textContent = "Thanks for your vote!";
+        updateUI();
+    }
+
+    likeBtn.addEventListener("click", function () { vote("like"); });
+    dislikeBtn.addEventListener("click", function () { vote("dislike"); });
+
+    submitBtn.addEventListener("click", function () {
+        if (hasCommented) {
+            message.textContent = "You have already commented.";
+            return;
+        }
+
+        var text = commentInput.value.trim();
+        if (text === "") {
+            message.textContent = "Please write a comment first.";
+            return;
+        }
+
+        comments.push(text);
+        hasCommented = true;
+        commentInput.value = "";
+        message.textContent = "Comment submitted.";
+        updateUI();
+    });
+
+    clearBtn.addEventListener("click", function () {
+        likes = START_LIKES;
+        dislikes = START_DISLIKES;
+        comments = [];
+        hasVoted = false;
+        hasCommented = false;
+        commentInput.value = "";
+
+        message.textContent = "Everything was reset. You can vote and comment again.";
+        updateUI();
+    });
+
+    updateUI();
+</script>
+
+</body>
+</html>
